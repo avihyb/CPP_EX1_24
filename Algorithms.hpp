@@ -1,3 +1,8 @@
+/*
+ID: 206769986
+E-Mail: avihyb@gmail.com
+*/
+
 #ifndef ALGORITHMS_HPP
 #define ALGORITHMS_HPP
 
@@ -8,14 +13,12 @@
 #include <limits>
 #include <iostream>
 #include <string>
-namespace ariel {
 
-    
-    
+namespace ariel {
         class Algorithms{
-        public:
-            void FloydWarshall(Graph& g);
-            static void DFS(Graph& g, int v, std::unordered_set<int>& visited);
+            public:
+            static void FloydWarshall(Graph& g);
+            static void DFS(Graph& g, int v, std::vector<bool>& visited);
             static int isConnected(Graph& g);
             static std::string shortestPath(Graph& g, int start, int end);
             static bool isContainsCycle(Graph& g);
@@ -23,7 +26,8 @@ namespace ariel {
             static std::string isBipartite(Graph& g);
             static int negativeCycle(Graph& g);
             
-        };
+            };
+            
 } // namespace ariel
 
 #endif 

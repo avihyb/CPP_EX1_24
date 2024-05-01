@@ -1,14 +1,20 @@
+/*
+ID: 206769986
+E-Mail: avihyb@gmail.com
+*/
+#include "Graph.hpp"
 #include "Algorithms.hpp"
+#include <unordered_set> 
 #include <vector>
 #include <queue>
-#include <limits>
+#include <climits>
 #include <iostream>
 #include <string>
 
 /*
 Code Explainations:
 
-    (I). visited.find(x) searches for x element, returns a pointer to that element if found.
+    (I)  visited.find(x) searches for x element, returns a pointer to that element if found.
          If not, returns an iterator pointing to the end of the set (aka visited.end()).
          Thus, "visited.find(x) == visited.end()" is equalivant of checking if the element isn't in the set.
 
@@ -17,10 +23,10 @@ namespace ariel
 {
 
     /*
-    
+        FloydWarshall: All-Pairs Shortest Paths algorithm.
     */
 void Algorithms::FloydWarshall(Graph& g){
-    if(g.shortestPathsComputed == false){
+    
     int numVertices = static_cast<int>(g.adjMat.size());
             g.shortestPaths = g.adjMat; 
 
@@ -41,9 +47,7 @@ void Algorithms::FloydWarshall(Graph& g){
                 g.hasCycle = true;// Detected a negative cycle
         }
     }
-    } else {
-        return;
-    }
+    
 }
 
     /*
@@ -51,76 +55,142 @@ void Algorithms::FloydWarshall(Graph& g){
         Visits all reachable vertices recursively, marking each visited vertex in the visited set.
         @return void
     */
-void Algorithms::DFS(Graph& g, int v, std::unordered_set<int>& visited) {
-    visited.insert(v);
-    for (const auto& neighbors : g.adjMat) {
-        for (int neighbor : neighbors) {
-            if (visited.find(neighbor) == visited.end()) {
-                DFS(g, neighbor, visited);
+void Algorithms::DFS(Graph& g, int v, std::vector<bool>& visited) {
+    visited[static_cast<size_t>(v)] = true;
+    for (int i = 0; i < g.adjMat.size(); ++i) {
+        if (g.adjMat[static_cast<size_t>(v)][static_cast<size_t>(i)] != 0 && !visited[static_cast<size_t>(i)]) {
+            DFS(g, i, visited);
+        }
+    }
+}
+
+int Algorithms::isConnected(Graph& g) {
+    if (g.isDirected) {
+        // Implement logic to check if a directed graph is connected
+        std::vector<bool> visited(g.adjMat.size(), false);
+
+        // Perform DFS starting from each node
+        for (int i = 0; i < g.adjMat.size(); ++i) {
+            std::vector<bool> tempVisited(g.adjMat.size(), false);
+            DFS(g, i, tempVisited);
+            // Merge tempVisited into visited
+            for (int j = 0; j < visited.size(); ++j) {
+                visited[static_cast<size_t>(j)] = visited[static_cast<size_t>(j)] || tempVisited[static_cast<size_t>(j)];
             }
         }
-    }
-}
 
-    /*
-        isConnected: Using DFS traversal,
-        if all vertices are visited => graph is connected. Otherwise, it's not.
-        @return 1 if connected, 0 if not.
-    */
-int Algorithms::isConnected(Graph& g) {
-    
-    std::unordered_set<int> visited;
-    DFS(g, 0, visited);
-
-    for(int i = 0; i < g.adjMat.size(); ++i){
-        if(visited.find(i) == visited.end()){ // If vertex 'i' isn't in the visited set. (I)
-            return 0;
+        // Check if all nodes are visited
+        for (bool v : visited) {
+            if (!v) return 0; // Not connected
         }
+        return 1; // Connected
+    } else {
+        // Implement logic to check if an undirected graph is connected
+        std::vector<bool> visited(g.adjMat.size(), false);
+
+        // Perform DFS starting from node 0
+        DFS(g, 0, visited);
+
+        // Check if all nodes are visited
+        for (bool v : visited) {
+            if (!v) return 0; // Not connected
+        }
+        return 1; // Connected
     }
-    return 1;
 }
 
+
+
     /*
-        shortestPath: Using the All-Pairs ShortestPath matrix (computed upon graph creation)
-        the function checks if there's path and tracks the shortest path.
+        shortestPath: Using the Dijkstra's Alogrithm to compute the shortest path from start to end.
         @return string representing the Shortest Path, or -1 in case there's no path.
     */
 std::string Algorithms::shortestPath(Graph& g, int start, int end) {
-    // Check if start and end vertices are valid
-    if (start < 0 || start >= static_cast<int>(g.adjMat.size()) || end < 0 || end >= static_cast<int>(g.adjMat.size())) {
-        return "-1"; 
+    if (start < 0 || start >= g.adjMat.size() || end >= g.adjMat.size() || end < 0) {
+        std::cerr << "Error: START/END point out of bounds." << std::endl;
+        return "-1";
     }
 
-    // Check if there is a shortest path from start to end
-    if (g.shortestPaths[static_cast<size_t>(start)][static_cast<size_t>(end)] == std::numeric_limits<int>::max()) {
-        return "-1"; 
+    if (start == end) {
+        return std::to_string(start);
     }
 
-    // Reconstruct the shortest path
-    std::string shortestPath; // Shortest Path will be stored in this string.
-    int current = start;
-    shortestPath += std::to_string(current);
+    if (!g.hasNegativeEdges && !g.isDirected) {
+        size_t n = g.adjMat.size();
+        std::vector<int> dist(n, INT_MAX); // Initialize distances with infinity
+        std::vector<int> prev(n, -1); // Previous node in the shortest path
+        std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> pq; // Min-heap
 
-    while (current != end) {
-            int next = -1;
-            for (size_t vertex = 0; vertex < g.adjMat.size(); ++vertex) {
-                if (g.shortestPaths[static_cast<size_t>(current)][static_cast<size_t>(vertex)] != std::numeric_limits<int>::max() &&
-                    g.shortestPaths[static_cast<size_t>(vertex)][static_cast<size_t>(end)] != std::numeric_limits<int>::max() &&
-                    g.shortestPaths[static_cast<size_t>(current)][static_cast<size_t>(end)] == g.shortestPaths[static_cast<size_t>(current)][static_cast<size_t>(vertex)] + g.shortestPaths[static_cast<size_t>(vertex)][static_cast<size_t>(end)]) {
-            next = vertex;
-            break;
-            }
+        dist[static_cast<size_t>(start)] = 0;
+        pq.push({0, start});
 
+        while (!pq.empty()) {
+            int u = pq.top().second;
+            pq.pop();
+
+            for (int v = 0; v < n; ++v) {
+                if (g.adjMat[static_cast<size_t>(u)][static_cast<size_t>(v)] != 0 && dist[static_cast<size_t>(u)] + g.adjMat[static_cast<size_t>(u)][static_cast<size_t>(v)] < dist[static_cast<size_t>(v)]) {
+                    dist[static_cast<size_t>(v)] = dist[static_cast<size_t>(u)] + g.adjMat[static_cast<size_t>(u)][static_cast<size_t>(v)];
+                    prev[static_cast<size_t>(v)] = u;
+                    pq.push({dist[static_cast<size_t>(v)], v});
+                }
             }
-            if (next == -1) {
-                return "-1"; // Error in path reconstruction, return "-1"
-            }
-            shortestPath += "->" + std::to_string(next);
-            current = next;
         }
 
-    return shortestPath; // Return the shortest path
+        // Reconstruct the shortest path
+        if (dist[static_cast<size_t>(end)] == INT_MAX)
+            return "-1"; // No path exists
+
+        std::string path = std::to_string(end);
+        while (prev[static_cast<size_t>(end)] != -1) {
+            path = std::to_string(prev[static_cast<size_t>(end)]) + "->" + path;
+            end = prev[static_cast<size_t>(end)];
+        }
+        return path;
+    } else if (g.isDirected) {
+        // Bellman-Ford algorithm for directed graphs
+        size_t n = g.adjMat.size();
+        std::vector<int> dist(n, INT_MAX); // Initialize distances with infinity
+        std::vector<int> prev(n, -1); // Previous node in the shortest path
+
+        dist[static_cast<size_t>(start)] = 0;
+
+        // Relax edges repeatedly
+        for (size_t i = 0; i < n - 1; ++i) {
+            for (size_t u = 0; u < n; ++u) {
+                for (size_t v = 0; v < n; ++v) {
+                    if (g.adjMat[u][v] != 0 && dist[u] != INT_MAX && dist[u] + g.adjMat[u][v] < dist[v]) {
+                        dist[v] = dist[u] + g.adjMat[u][v];
+                        prev[v] = u;
+                    }
+                }
+            }
+        }
+
+        // Check for negative cycles
+        for (size_t u = 0; u < n; ++u) {
+            for (size_t v = 0; v < n; ++v) {
+                if (g.adjMat[u][v] != 0 && dist[u] != INT_MAX && dist[u] + g.adjMat[u][v] < dist[v]) {
+                    return "Negative cycle detected"; // Negative cycle found
+                }
+            }
+        }
+
+        // Reconstruct the shortest path
+        if (dist[static_cast<size_t>(end)] == INT_MAX)
+            return "-1"; // No path exists
+
+        std::string path = std::to_string(end);
+        while (prev[static_cast<size_t>(end)] != -1) {
+            path = std::to_string(prev[static_cast<size_t>(end)]) + "->" + path;
+            end = prev[static_cast<size_t>(end)];
+        }
+        return path;
+    } else {
+        return "Not implemented for undirected graphs";
+    }
 }
+
 
     /*
         isContainsCycle: Using the ShortestPaths of a graph, this function scans for a 
@@ -247,7 +317,7 @@ std::string Algorithms::printCycle(Graph& g){
                 g.hasCycle = true;
             }
         }
-        std::cout << "No negative cycle in this graph";
+        //std::cout << "No negative cycle in this graph";
         return 0;
     }
     
