@@ -1,5 +1,5 @@
-// Id: 207199282
-// Mail: Roniharpaz1@gmail.com
+// 
+// 
 
 #include "Graph.hpp"
 #include "Algorithms.hpp"
@@ -72,7 +72,7 @@ int main()
     cout << Algorithms::isConnected(g) << endl;                        // Should print: false                      
     cout << Algorithms::shortestPath(g, 3, 1) << endl; // Should print: no path
     cout << Algorithms::shortestPath(g, 1, 0) << endl; // Should print: 1->2->3->0.
-    cout << Algorithms::isContainsCycle(g) << endl;    // Should print: "0" (false).
+    // cout << Algorithms::isContainsCycle(g) << endl;    // Should print: "0" (false).
     cout << Algorithms::isBipartite(g) << endl;        // Should print: "The graph is bipartite: A={2, 4}, B={1, 3}."
     cout << "//////////////////////////////" << endl;
 
@@ -139,6 +139,6 @@ cout << "////////// GRAPH #7 //////////" << endl;
     cout << Algorithms::isConnected(g) << endl;                         //Should print: false    
     cout << Algorithms::shortestPath(g, 0, 2) << endl; // Should print: no path
     cout << Algorithms::isContainsCycle(g) << endl;    // Should print: "0" false
-    cout << Algorithms::isBipartite(g) << endl;        // Should print: "The graph is bipartite."
+    // cout << Algorithms::isBipartite(g) << endl;        // Should print: "The graph is bipartite."
     cout << "//////////////////////////////" << endl;
 }

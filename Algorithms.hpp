@@ -17,13 +17,17 @@ E-Mail: avihyb@gmail.com
 namespace ariel {
         class Algorithms{
             public:
-            static void FloydWarshall(Graph& g);
-            static void DFS(Graph& g, int v, std::vector<bool>& visited);
+            static void BFS(Graph& g, int v, std::vector<bool>& visited);
             static int isConnected(Graph& g);
-            static std::string shortestPath(Graph& g, int start, int end);
-            static bool isContainsCycle(Graph& g);
-            static std::string printCycle(Graph& g);
-            static std::string isBipartite(Graph& g);
+            static std::string shortestPath(Graph& g, size_t start, size_t end);
+            static void BellmanFord(Graph& g, size_t start, std::vector<int>& prev, std::vector<int>& dist);
+            static void Relax(size_t u, size_t v, int w, std::vector<int>& prev, std::vector<int>& dist);
+            static std::string printPath(std::vector<int>& dist, std::vector<int>& prev, size_t start, size_t end);
+            static std::string isContainsCycle(Graph& g);
+            static std::string constructCycle(Graph& g, std::vector<int>& parent, int start);
+            static bool detectCycleDFS(const Graph& graph, size_t v, std::vector<bool>& visited, std::vector<bool>& stack, std::string& cycle);
+            static bool bipartite(Graph& g, std::vector<std::vector<int>>& edges, int start, std::vector<bool>& visited);
+            static bool isBipartite(Graph& g);
             static int negativeCycle(Graph& g);
             
             };

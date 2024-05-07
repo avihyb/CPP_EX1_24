@@ -1,82 +1,82 @@
-/*
-ID: 206769986
-E-Mail: avihyb@gmail.com
-*/
-
 #include "Graph.hpp"
-#include "Algorithms.hpp"
-#include <iostream>
-#include <vector>
-#include <limits>
 
+namespace ariel {
 
-namespace ariel
-    {
-    
-        Graph::Graph() {
-            
+    Graph::Graph() {    }
+
+    void Graph::loadGraph(const std::vector<std::vector<int>>& matrix){
+        // Clear previous data
+        adjMat.clear();
+        isDirected = false;
+        hasNegativeEdges = false;
+        int n = matrix.size();
+        edges = 0;
+
+        // Check if the matrix is square
+        for (size_t i = 0; i < n; ++i) {
+            if (matrix[i].size() != n) {
+                throw std::invalid_argument("Error: Matrix is not square!");
+            }
         }
 
-        void Graph::loadGraph(const std::vector<std::vector<int>>& matrix){
-
-            int n = matrix.size();
-            bool isSymmetric = true;
-            
-            // Check if the matrix is square
-            for (size_t i = 0; i < n; ++i) {
-                if (matrix[i].size() != n) {
-                    std::cerr << "Error: Matrix is not square!" << std::endl;
-                    return;
+      // Check if the matrix is symmetric
+        for (size_t i = 0; i < n; ++i) {
+            for (size_t j = 0; j < n; ++j) {
+                if (matrix[i][j] != matrix[j][i]) {
+                    this->isDirected = true;
+                    break; // Exit the inner loop
                 }
             }
+            if (this->isDirected) {
+                break; // Exit the outer loop
+            }
+        }
+       // std::cout << "isDirected: " << isDirected << std::endl;
 
-            // Check if the matrix is symmetric
-            for (size_t i = 0; i < n && isSymmetric; ++i) {
-                for (size_t j = 0; j < n && isSymmetric; ++j) {
-                    if (matrix[i][j] != matrix[j][i]) {
-                        isSymmetric = false;
-                    }
+        // Check if there are negative edges
+        for(size_t i = 0; i < n; ++i){
+            for (size_t j = 0; j < n; ++j) {
+                if(matrix[i][j] < 0){
+                    hasNegativeEdges = true;
+                    break; // Exit the inner loop
                 }
             }
+            if (hasNegativeEdges) {
+                break; // Exit the outer loop
+            }
+        }
 
-            for(size_t i = 0; i < n; ++i){
-                for (size_t j = 0; i < matrix[0].size(); i++)
-                {
-                    if(matrix[i][j] < 0){
-                        hasNegativeEdges = true;
-                        break;
-                    }
-                }
-                
-            }
-            if(!isSymmetric){
-                isDirected = true;
-            }
         
-            adjMat = matrix;
+        // Update number of vertices and edges
+        v = static_cast<size_t>(n);
+        
 
-        }
+        // Copy matrix to adjMat
+        adjMat = matrix;
 
-        void Graph::printGraph() const{
-
-            int vertices = adjMat.size();
-            int edges = 0;
-
-            for(size_t i = 0; i < adjMat.size(); ++i){
-                for(size_t j = 0; j < adjMat[i].size(); ++j){
-                    if(adjMat[i][j] != 0){
-                        edges++;
-                    }
+        // Count edges
+        for(size_t i = 0; i < n; ++i){
+            for(size_t j = 0; j < n; ++j){
+                if(adjMat[i][j] != 0){
+                    edges++;
                 }
             }
-
-            if(!isDirected){
-                edges = edges / 2;
-            }
-
-            std::cout << "Graph with " << vertices << " vertices and " << edges << " edges." << std::endl;
         }
 
-   
-    
+        // For undirected graph, divide edge count by 2
+        if(!isDirected){
+            edges = edges / 2;
+        }
+
+        
+    }
+
+    size_t Graph::getNumVertices() const{
+        return v;
+    }
+
+    void Graph::printGraph() const{
+        std::cout << "Graph with " << v << " vertices and " << edges << " edges." << std::endl;
+    }
+
 } // namespace ariel
