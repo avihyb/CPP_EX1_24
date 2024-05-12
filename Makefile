@@ -23,7 +23,10 @@ test: TestCounter.o Test.o $(OBJECTSTEST)
 	$(CXX) $(CXXFLAGS) $^ -o test
 
 tidy:
-	g++-tidy $(SOURCES) -checks=bugprone-*,g++-analyzer-*,cppcoreguidelines-*,performance-*,portability-*,readability-*,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-owning-memory --warnings-as-errors=-* --
+	clang-tidy $(SOURCES) \
+			-checks=bugprone-*,clang-analyzer-*,cppcoreguidelines-*,performance-*,portability-*,readability-* \
+			--warnings-as-errors=* \
+			
 
 valgrind: demo test
 	valgrind --tool=memcheck $(VALGRIND_FLAGS) ./demo 2>&1 | { egrep "lost| at " || true; }

@@ -17,8 +17,9 @@ namespace ariel {
         std::vector<std::vector<int>> adjMat;
         std::vector<std::vector<int>> shortestPaths;
         bool isDirected;
-        bool hasCycle;
+        bool hasNegativeCycle;
         bool hasNegativeEdges;
+        std::string cycle;
         size_t v;
         int edges;
         std::unordered_set<int> sets[2];
@@ -26,7 +27,9 @@ namespace ariel {
         Graph();
         void loadGraph(const std::vector<std::vector<int>>& matrix);
         void printGraph() const;
-        size_t getNumVertices() const;
+        inline size_t getNumVertices() const{ return adjMat.size(); };
+        inline std::string getCycle(){ return cycle; }
+        inline void setCycle(std::string foundcycle) { cycle = foundcycle;}
         
     };
 } // namespace ariel

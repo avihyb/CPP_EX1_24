@@ -6,12 +6,15 @@ namespace ariel {
 
     void Graph::loadGraph(const std::vector<std::vector<int>>& matrix){
         // Clear previous data
-        adjMat.clear();
-        isDirected = false;
-        hasNegativeEdges = false;
+        this->adjMat.clear();
+        this->cycle.erase();
+        this->isDirected = false;
+        this->hasNegativeEdges = false;
+        this->hasNegativeCycle = false;
         int n = matrix.size();
-        edges = 0;
-
+        this->edges = 0;
+        this->cycle;
+        
         // Check if the matrix is square
         for (size_t i = 0; i < n; ++i) {
             if (matrix[i].size() != n) {
@@ -37,11 +40,11 @@ namespace ariel {
         for(size_t i = 0; i < n; ++i){
             for (size_t j = 0; j < n; ++j) {
                 if(matrix[i][j] < 0){
-                    hasNegativeEdges = true;
+                    this->hasNegativeEdges = true;
                     break; // Exit the inner loop
                 }
             }
-            if (hasNegativeEdges) {
+            if (this->hasNegativeEdges) {
                 break; // Exit the outer loop
             }
         }
@@ -71,9 +74,6 @@ namespace ariel {
         
     }
 
-    size_t Graph::getNumVertices() const{
-        return v;
-    }
 
     void Graph::printGraph() const{
         std::cout << "Graph with " << v << " vertices and " << edges << " edges." << std::endl;
