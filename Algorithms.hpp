@@ -16,6 +16,10 @@ E-Mail: avihyb@gmail.com
 
 namespace ariel {
         class Algorithms{
+
+            #define WHITE 1
+            #define GRAY 2
+
             public:
             static void BFS(Graph& g, int v, std::vector<bool>& visited);
             static int isConnected(Graph& g);
@@ -25,7 +29,7 @@ namespace ariel {
             static std::string printPath(std::vector<int>& prev,  size_t start, size_t end);
             static std::string isContainsCycle(Graph& g);
             static bool DFSCycle(Graph& g, std::vector<int>& color, std::vector<int>& path, size_t v);
-            static std::string getCycle(std::vector<int> path, size_t start, size_t end);
+            static std::string getCycles(std::vector<int>& path, size_t start, size_t end);
             static std::string constructCycle(Graph& g, std::vector<int>& parent, int start);
             static bool bipartite(Graph& g, std::vector<std::vector<int>>& edges, int start, std::vector<int>& visited, std::unordered_set<int>& setA, std::unordered_set<int>& setB);
             static std::string isBipartite(Graph& g);

@@ -2,6 +2,7 @@
 ID: 206769986
 E-Mail: avihyb@gmail.com
 */
+
 #include "Graph.hpp"
 #include "Algorithms.hpp"
 #include <unordered_set> 
@@ -20,16 +21,21 @@ E-Mail: avihyb@gmail.com
 /*
 Code Explainations:
 
-    (I)  visited.find(x) searches for x element, returns a pointer to that element if found.
-         If not, returns an iterator pointing to the end of the set (aka visited.end()).
-         Thus, "visited.find(x) == visited.end()" is equalivant of checking if the element isn't in the set.
 
 */
 namespace ariel
 {
 
- const int INF = std::numeric_limits<int>::max();
+const int INF = std::numeric_limits<int>::max();
 
+/*
+    BFS: 
+    Performs Breadth-First Search (BFS) on the given graph starting from a specified vertex.
+    @param Graph& g: Reference to the graph object.
+    @param int v: The starting vertex for BFS.
+    @param std::vector<bool>& visited: Reference to a boolean vector to mark visited vertices.
+    @return void
+*/
 void Algorithms::BFS(Graph& g, int v, std::vector<bool>& visited) {
     std::queue<int> q;
     q.push(v);
@@ -48,7 +54,16 @@ void Algorithms::BFS(Graph& g, int v, std::vector<bool>& visited) {
     }
 }
 
+/*
+    isConnected: 
+    Checks whether the graph is connected or not. For directed graphs, it uses BFS from each vertex to determine connectivity. For undirected graphs, it performs BFS starting from a single vertex (vertex 0 by default).
+    @param Graph& g: Reference to the graph object.
+    @return int: 0 for not connected, 1 for connected.
+*/
 int Algorithms::isConnected(Graph& g) {
+     if (g.getNumVertices() <= 1) {
+            //std::cerr << "Error: Graph has 1 or less vertices." << std::endl;
+            return 0; }
     if (g.isDirected) {
         std::vector<bool> visited(g.adjMat.size(), false);
 
@@ -82,8 +97,22 @@ int Algorithms::isConnected(Graph& g) {
     }
 }
 
-
+/*
+    shortestPath:
+    Finds the shortest path from a specified start vertex to an end vertex in the graph using the Bellman-Ford algorithm. 
+    Handles negative cycles if present.
+    @param Graph& g: Reference to the graph object.
+    @param size_t start: Index of the starting vertex.
+    @param size_t end: Index of the end vertex.
+    @return std::string: String representing the shortest path or "-1" if no path exists.
+*/
 std::string Algorithms::shortestPath(Graph& g, size_t start, size_t end) {
+
+    if (start < 0 || start >= g.getNumVertices() || end < 0 || end >= g.getNumVertices()) {
+            // Invalid start or end vertex index
+            std::cerr << "Error: Invalid start or end vertex index for shortestPath." << std::endl;
+            return "-1";
+        }
     size_t n = g.getNumVertices();
     std::vector<int> prev(n, -1);
     std::vector<int> dist(n, INF);
@@ -117,6 +146,15 @@ std::string Algorithms::shortestPath(Graph& g, size_t start, size_t end) {
     }
 }
 
+/*
+    BellmanFord:
+    Applies the Bellman-Ford algorithm to find the shortest paths from a specified start vertex to all other vertices in the graph.
+    @param Graph& g: Reference to the graph object.
+    @param size_t start: Index of the starting vertex.
+    @param std::vector<int>& prev: Reference to a vector to store the previous vertex in the shortest path.
+    @param std::vector<int>& dist: Reference to a vector to store the shortest distance from the start vertex.
+    @return void
+*/
 void Algorithms::BellmanFord(Graph& g, size_t start, std::vector<int>& prev, std::vector<int>& dist) {
     size_t V = g.getNumVertices();
     dist[start] = 0;
@@ -133,6 +171,16 @@ void Algorithms::BellmanFord(Graph& g, size_t start, std::vector<int>& prev, std
     }
 }
 
+/*
+    Relax:
+    Updates the distance and previous vertex information if a shorter path is found from vertex u to vertex v.
+    @param size_t u: Index of the source vertex.
+    @param size_t v: Index of the destination vertex.
+    @param int w: Weight of the edge from u to v.
+    @param std::vector<int>& prev: Reference to a vector storing previous vertex information.
+    @param std::vector<int>& dist: Reference to a vector storing distance information.
+    @return void
+*/
 void Algorithms::Relax(size_t u, size_t v, int w, std::vector<int>& prev, std::vector<int>& dist) {
     if (dist[u] != INF && (dist[v] > dist[u] + w)) {
         dist[v] = dist[u] + w;
@@ -140,6 +188,14 @@ void Algorithms::Relax(size_t u, size_t v, int w, std::vector<int>& prev, std::v
     }
 }
 
+/*
+    printPath:
+    Constructs and returns a string representing the shortest path from the start vertex to the end vertex using the information stored in the previous vertex vector.
+    @param std::vector<int>& prev: Reference to a vector storing previous vertex information.
+    @param size_t start: Index of the starting vertex.
+    @param size_t end: Index of the end vertex.
+    @return std::string: String representing the shortest path or "-1" if no path exists.
+*/
 std::string Algorithms::printPath(std::vector<int>& prev,  size_t start, size_t end) {
     std::string path;
     if (prev[end] == -1) {
@@ -163,75 +219,107 @@ std::string Algorithms::printPath(std::vector<int>& prev,  size_t start, size_t 
     return path;
 }
 
-
-std::string Algorithms::isContainsCycle(Graph& g) {
-    
-    std::string potentialCycle = g.getCycle();
-    
-    if (!potentialCycle.empty()) {
-        return potentialCycle;
-    } else {
-        if(g.getNumVertices() > 0){
-            bool hasCycle = false;
-            size_t n = (size_t)g.getNumVertices();
-            std::vector<int> color(n, 1);
-            std::vector<int> path(n, -1);
-            for(size_t i = 0; i < n; i++){
-                hasCycle = DFSCycle(g, color, path, i);
-                if(hasCycle){
-                    return g.getCycle();
-                }
-            }
-
+/*
+    isContainsCycle:
+    Checks if the graph contains a cycle using Depth-First Search (DFS).
+    @param Graph& g: Reference to the graph object.
+    @return std::string: String indicating the presence of cycles or absence if none.
+*/
+std::string Algorithms::isContainsCycle(Graph& g){
+    if(g.hasNegativeEdges){
+        if(g.hasNegativeCycle){
+            return g.getCycle();
+        } else {
+            negativeCycle(g);
         }
     }
-    return "No cycles";
-}
+        bool ans = false;
+        if (g.getEdges() == 0)
+            return "No cycles";
+        size_t n = (size_t)g.getNumVertices();
+          if (n == 0) {
+        std::cerr << "Error: Graph has no vertices." << std::endl;
+        return "";
+        }
+        std::vector<int> color(n, WHITE);
+        std::vector<int> path(n, -1);
+        for (size_t i = 0; i < n; i++)
+        {
+            ans = DFSCycle(g, color, path, i);
+            if (ans)
+                break;
+        }
+        if (!ans)
+            std::cout << "No cycles" << std::endl;
+        return g.getCycle();
+    }
 
-
+/*
+    DFSCycle:
+    Performs Depth-First Search (DFS) to detect cycles in the graph.
+    @param Graph& g: Reference to the graph object.
+    @param std::vector<int>& color: Reference to a vector to mark the color of vertices during DFS.
+    @param std::vector<int>& path: Reference to a vector to store the path information.
+    @param size_t v: Index of the current vertex in DFS.
+    @return bool: Boolean indicating whether a cycle is found or not.
+*/
 bool Algorithms::DFSCycle(Graph& g, std::vector<int>& color, std::vector<int>& path, size_t v) {
-    
-    
-    for(size_t i = 0; i < g.getNumVertices(); i++) {
-        if(g.adjMat[v][i]) {
-            if(color[i] == 1) {
-               color[i] = -1;
-               path[i] = v;
-               return DFSCycle(g, color, path, i);
-        }
-        else if (color[i] == -1)
-            g.setCycle(getCycle(path, v, i));
-            return true;
-        
+     for (size_t i = 0; i < g.adjMat[v].size(); i++)
+            {
+                if (g.adjMat[v][i])
+                {
+                    if (color[i] == WHITE)
+                    {
+                        color[i] = GRAY;
+                        path[i] = v;
+                        return DFSCycle(g, color, path, i);
+                    }
+                    else if (color[i] == GRAY)
+                        g.setCycle(getCycles(path, i, v));
+                    return true;
+                }
             }
-        }
-        return false;
+            return false;
 }
 
+/*
+    getCycle:
+    Constructs and returns a string representing the cycle found in the graph using the information stored in the path vector.
+    @param std::vector<int>& path: Reference to a vector storing the path information.
+    @param size_t start: Index of the starting vertex of the cycle.
+    @param size_t end: Index of the ending vertex of the cycle.
+    @return std::string: String representing the cycle in the graph.
+*/
+std::string Algorithms::getCycles(std::vector<int>& path, size_t start, size_t end) {
+    std::string ans;
+    ans += std::to_string(end) + "->";
+    std::vector<int> cyclePath;
+    size_t i = end;
+    cyclePath.push_back(i);
+    while (i != start) {
+        i = static_cast<size_t>(path[i]);
+        cyclePath.push_back(i);
+    }
+    for (size_t j = cyclePath.size() - 1; j > 0; --j) {
+        ans += std::to_string(cyclePath[j]) + "->";
+    }
+    ans += std::to_string(cyclePath[0]);
+    return ans;
+}
 
-
-std::string Algorithms::getCycle(std::vector<int> path, size_t start, size_t end){
-            std::string ans;
-            std::vector<int> oppositePath;
-            size_t i = end;
-            oppositePath.push_back(i);
-            while (i != start)
-            {
-                i = (size_t)path[i];
-                oppositePath.push_back(i);
-            }
-            for (size_t i = oppositePath.size() - 1; i > 0; i--)
-            {
-                ans += oppositePath[i] + 48;
-                ans += "->";
-            }
-            ans += oppositePath[0] + 48;
-            return ans;
-        }
-
+/*
+    isBipartite:
+    Checks if the graph is bipartite using BFS and two sets to assign different colors to vertices.
+    @param Graph& g: Reference to the graph object.
+    @return std::string: String indicating whether the graph is bipartite or not.
+*/
 std::string Algorithms::isBipartite(Graph& g) {
     // coverting adjMat to adjList
     size_t n = g.adjMat.size();
+      if (n == 0) {
+        std::cerr << "Error: Graph has no vertices." << std::endl;
+        return "";
+    }
     std::vector<std::vector<int>> edges(n);
 
     for (size_t i = 0; i < n; ++i) {
@@ -280,9 +368,20 @@ std::string Algorithms::isBipartite(Graph& g) {
         result += "Not bipartite";
     }
     return result;
+    
 }
 
-
+/*
+    bipartite:
+    Implements the bipartite checking logic using BFS and two sets to assign different colors to vertices.
+    @param Graph& g: Reference to the graph object.
+    @param std::vector<std::vector<int>>& edges: Reference to the adjacency list representation of the graph.
+    @param int start: Index of the starting vertex for BFS.
+    @param std::vector<int>& visited: Reference to a vector to mark visited vertices.
+    @param std::unordered_set<int>& setA: Reference to the set representing vertices with one color.
+    @param std::unordered_set<int>& setB: Reference to the set representing vertices with another color.
+    @return bool: Boolean indicating whether the graph is bipartite or not.
+*/
 bool Algorithms::bipartite(Graph& g, std::vector<std::vector<int>>& edges, int start, std::vector<int>& visited, std::unordered_set<int>& setA, std::unordered_set<int>& setB) {
   std::queue<int> q;
   q.push(start);
@@ -311,7 +410,17 @@ bool Algorithms::bipartite(Graph& g, std::vector<std::vector<int>>& edges, int s
   return true;
 }
 
-    int Algorithms::negativeCycle(Graph& g) {
+/*
+    negativeCycle:
+    Checks if the graph contains a negative cycle using the Bellman-Ford algorithm.
+    @param Graph& g: Reference to the graph object.
+    @return int: 1 if a negative cycle is found, 0 otherwise.
+*/
+int Algorithms::negativeCycle(Graph& g) {
+      if (g.getNumVertices() == 0) {
+        std::cerr << "Error: Graph has no vertices." << std::endl;
+        return 0;
+    }
     if(g.hasNegativeEdges){
         if(g.hasNegativeCycle){
                 return 1;

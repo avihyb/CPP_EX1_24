@@ -14,15 +14,14 @@ E-Mail: avihyb@gmail.com
 namespace ariel {
     class Graph {
     public:
-        std::vector<std::vector<int>> adjMat;
-        std::vector<std::vector<int>> shortestPaths;
-        bool isDirected;
+        std::vector<std::vector<int>> adjMat; // Adjantency Matrix 
+        bool isDirected; 
         bool hasNegativeCycle;
         bool hasNegativeEdges;
         std::string cycle;
-        size_t v;
-        int edges;
-        std::unordered_set<int> sets[2];
+        size_t v; // Number of vertices
+        int edges; // Number of edges
+        
 
         Graph();
         void loadGraph(const std::vector<std::vector<int>>& matrix);
@@ -30,7 +29,17 @@ namespace ariel {
         inline size_t getNumVertices() const{ return adjMat.size(); };
         inline std::string getCycle(){ return cycle; }
         inline void setCycle(std::string foundcycle) { cycle = foundcycle;}
-        
+        inline int getEdges(){ return edges; }
+        Graph operator+(const Graph& other) const;
+        friend std::ostream& operator<<(std::ostream& os, const Graph& graph);
+        void operator*=(int scalar);
+        void operator/=(int scalar);
+        friend Graph operator*(const Graph& g1, const Graph& g2);
+        friend Graph& operator++(Graph& graph);
+        friend Graph& operator--(Graph& graph);
+        friend bool operator==(const Graph& g1, const Graph& g2);
+        friend bool operator<=(const Graph& g1, const Graph& g2);
+        friend bool operator>=(const Graph& g1, const Graph& g2);
     };
 } // namespace ariel
 

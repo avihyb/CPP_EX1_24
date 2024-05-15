@@ -115,8 +115,7 @@ TEST_CASE("Test isContainsCycle")
         {1, 0, 1},
         {0, 1, 0}};
     g.loadGraph(graph);
-    //std::cout << "CYCLE BEFORE: " << g.getCycle() << std::endl;
-    CHECK(ariel::Algorithms::isContainsCycle(g) == "No cycles");
+    CHECK(ariel::Algorithms::isContainsCycle(g) == "0->1->0");
 
     vector<vector<int>> graph2 = {
         {0, 1, 1, 0, 0},
@@ -125,7 +124,7 @@ TEST_CASE("Test isContainsCycle")
         {0, 0, 1, 0, 0},
         {0, 0, 0, 0, 0}};
     g.loadGraph(graph2);
-    CHECK(ariel::Algorithms::isContainsCycle(g) == "1");
+    CHECK(ariel::Algorithms::isContainsCycle(g) == "0->1->0");
 
     vector<vector<int>> graph3 = {
         {0, 0, 0, 0},
@@ -143,18 +142,18 @@ TEST_CASE("Test isContainsCycle")
         {0, 0, 0, 0}
     };
     g.loadGraph(graph4);
-    CHECK(ariel::Algorithms::isContainsCycle(g) == "1->2->3");
+    CHECK(ariel::Algorithms::isContainsCycle(g) == "0->1->2->0");
 
     std::vector<std::vector<int>> graph5 = {
     {0, 1, 0, 0, 1},
     {0, 0, 1, 0, 0},
     {0, 0, 0, 1, 0},
     {0, 0, 0, 0, 1},
-    {1, 0, 0, 0, 0}
-};
+    {1, 0, 0, 0, 0}};
+
 // Cycle: 1->2->3->4->5->1
 g.loadGraph(graph5);
-CHECK(ariel::Algorithms::isContainsCycle(g) == "1->2->3->4->5->1");
+CHECK(ariel::Algorithms::isContainsCycle(g) == "0->1->2->3->4->0");
 
 }
 TEST_CASE("Test isBipartite")
@@ -205,6 +204,13 @@ TEST_CASE("Test negative cycles"){
     g.loadGraph(graph1);
     CHECK(ariel::Algorithms::negativeCycle(g) == 0);
 
+    vector<vector<int>> graph2 = {
+        {0, 0, 0, 0},
+        {4, 0, -3, 0},
+        {0, 0, 0, -5},
+        {0, -7, 0, 0}};
+        g.loadGraph(graph2);
+    CHECK(ariel::Algorithms::negativeCycle(g) == 1);
     
 
 
@@ -221,4 +227,15 @@ TEST_CASE("Test invalid graph")
         {0, 0, 4, 0},
         {0, 0, 0, 5}};
     CHECK_THROWS(g.loadGraph(graph));
+}
+
+TEST_CASE("Test single-node graph")
+{
+    ariel::Graph g;
+    vector<vector<int>> graph = {{0}};
+    g.loadGraph(graph);
+    CHECK(ariel::Algorithms::isConnected(g) == 0);
+    CHECK(ariel::Algorithms::shortestPath(g, 0, 2) == "-1");
+    CHECK(ariel::Algorithms::isBipartite(g) == "The graph is bipartite: A={0}, B={}");
+    CHECK(ariel::Algorithms::isContainsCycle(g) == "No cycles");
 }
