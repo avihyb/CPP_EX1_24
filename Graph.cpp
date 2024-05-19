@@ -241,4 +241,4 @@ bool operator>=(const Graph& g1, const Graph& g2){
 
     return true;
 }
-} // namespace ariel
+}  // namespace ariel
