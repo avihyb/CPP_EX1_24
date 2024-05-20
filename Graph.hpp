@@ -36,12 +36,18 @@ namespace ariel {
         friend std::ostream& operator<<(std::ostream& os, const Graph& graph);
         void operator*=(int scalar);
         void operator/=(int scalar);
+        Graph& operator+=(const Graph& other);
+        Graph& operator-=(const Graph& other);
         friend Graph operator*(const Graph& g1, const Graph& g2);
         friend Graph& operator++(Graph& graph);
         friend Graph& operator--(Graph& graph);
         friend bool operator==(const Graph& g1, const Graph& g2);
         friend bool operator<=(const Graph& g1, const Graph& g2);
         friend bool operator>=(const Graph& g1, const Graph& g2);
+        bool operator<(const Graph& other);
+        Graph& operator+();
+        Graph& operator-();
+        bool operator!=(const Graph& other);
     };
 } // namespace ariel
 

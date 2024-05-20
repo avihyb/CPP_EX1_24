@@ -275,4 +275,80 @@ bool operator>=(const Graph& g1, const Graph& g2){
 
     return true;
 }
+
+Graph &Graph::operator+=(const Graph &other)
+    {
+        if (this->v != other.v)
+        {
+            throw("There are two matrix with difference sizes");
+        }
+        size_t n = (size_t)this->v;
+        for (size_t i = 0; i < n; i++)
+        {
+            for (size_t j = 0; j < n; j++)
+            {
+                this->adjMat[i][j] += other.adjMat[i][j];
+            }
+        }
+        
+        return *this;
+    }
+
+   
+
+Graph &Graph::operator-=(const Graph &other)
+{
+    if (this->v != other.v)
+    {
+        throw("There are two matrix with difference sizes");
+    }
+    size_t n = (size_t)this->v;
+    for (size_t i = 0; i < n; i++)
+    {
+        for (size_t j = 0; j < n; j++)
+        {
+            this->adjMat[i][j] -= other.adjMat[i][j];
+        }
+    }
+    return *this;
+}
+
+ Graph& Graph::operator+() 
+    {
+        size_t n = (size_t)this->v;
+        for (size_t i = 0; i < n; i++)
+        {
+            for (size_t j = 0; j < n; j++)
+            {
+                if (this->adjMat[i][j])
+                    this->adjMat[i][j] *= 1;
+            }
+        }
+        return *this;
+}
+
+
+Graph& Graph::operator-()
+{
+    size_t n = (size_t)this->v;
+    for (size_t i = 0; i < n; i++)
+    {
+        for (size_t j = 0; j < n; j++)
+        {
+            if (this->adjMat[i][j])
+                this->adjMat[i][j] *= (-1);
+        }
+    }
+    return *this;
+}
+
+bool Graph::operator<(const Graph &other)
+{
+    return !(this <= &other);
+}
+
+bool Graph::operator!=(const Graph &other)
+{
+    return !(this == &other);
+}
 }  // namespace ariel
