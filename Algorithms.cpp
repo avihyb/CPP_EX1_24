@@ -110,7 +110,7 @@ std::string Algorithms::shortestPath(Graph& g, size_t start, size_t end) {
 
     if (start < 0 || start >= g.getNumVertices() || end < 0 || end >= g.getNumVertices()) {
             // Invalid start or end vertex index
-            std::cerr << "Error: Invalid start or end vertex index for shortestPath." << std::endl;
+            //std::cerr << "Error: Invalid start or end vertex index for shortestPath." << std::endl;
             return "-1";
         }
     size_t n = g.getNumVertices();

@@ -22,7 +22,7 @@ namespace ariel {
         size_t v; // Number of vertices
         int edges; // Number of edges
         
-
+        // PART I: CONSTRUCTOR AND BASIC FUNCTIONS
         Graph();
         void loadGraph(const std::vector<std::vector<int>>& matrix);
         void printGraph() const;
@@ -30,6 +30,8 @@ namespace ariel {
         inline std::string getCycle(){ return cycle; }
         inline void setCycle(std::string foundcycle) { cycle = foundcycle;}
         inline int getEdges(){ return edges; }
+        
+        // PART II: OPERATORS
         Graph operator+(const Graph& other) const;
         friend std::ostream& operator<<(std::ostream& os, const Graph& graph);
         void operator*=(int scalar);

@@ -1,7 +1,9 @@
 #include "doctest.h"
 #include "Algorithms.hpp"
 #include "Graph.hpp"
-
+#include <iostream>
+#include <sstream>
+#include <string>
 using namespace std;
 
 
@@ -238,4 +240,130 @@ TEST_CASE("Test single-node graph")
     CHECK(ariel::Algorithms::shortestPath(g, 0, 2) == "-1");
     CHECK(ariel::Algorithms::isBipartite(g) == "The graph is bipartite: A={0}, B={}");
     CHECK(ariel::Algorithms::isContainsCycle(g) == "No cycles");
+}
+
+/* EX 2 TESTS */
+TEST_CASE("Operators testing"){
+    ariel::Graph g;
+    vector<vector<int>> graph = {
+        {0, 1, 0},
+        {1, 0, 1},
+        {0, 1, 0}};
+    g.loadGraph(graph);
+    CHECK(g == g);
+    ariel::Graph g2;
+    vector<vector<int>> graph2 = {
+        {0, 2, 0},
+        {2, 0, 2},
+        {0, 2, 0}};
+    g2.loadGraph(graph2);
+    g*=2;
+    CHECK(g == g2);
+    ++g;
+    --g;
+    CHECK(g == g2);
+
+    ariel::Graph equalGraph;
+    vector<vector<int>> eqaulMat = {
+        {0, 1, 0},
+        {1, 0, 2},
+        {0, 2, 0}
+    };
+    equalGraph.loadGraph(eqaulMat);
+
+    vector<vector<int>> lessMat = {
+        {0, 1},
+        {1, 0}
+    };
+    ariel::Graph lessGraph;
+    lessGraph.loadGraph(lessMat);
+    CHECK(lessGraph <= equalGraph);
+    CHECK_FALSE(lessGraph >= equalGraph);
+}
+TEST_CASE("Test graph addition")
+{
+    ariel::Graph g1;
+    vector<vector<int>> graph = {
+        {0, 1, 0},
+        {1, 0, 1},
+        {0, 1, 0}};
+    g1.loadGraph(graph);
+    ariel::Graph g2;
+    vector<vector<int>> weightedGraph = {
+        {0, 1, 1},
+        {1, 0, 2},
+        {1, 2, 0}};
+    g2.loadGraph(weightedGraph);
+    ariel::Graph g3 = g1 + g2;
+    vector<vector<int>> expectedGraph = {
+        {0, 2, 1},
+        {2, 0, 3},
+        {1, 3, 0}};
+    std::ostringstream oss;
+    oss << g3;
+    std::string actual = oss.str();
+    CHECK(actual == "[0, 2, 1], [2, 0, 3], [1, 3, 0]\n");
+}
+
+TEST_CASE("Test graph multiplication")
+{
+    ariel::Graph g1;
+    vector<vector<int>> graph = {
+        {0, 1, 0},
+        {1, 0, 1},
+        {0, 1, 0}};
+    g1.loadGraph(graph);
+    ariel::Graph g2;
+    vector<vector<int>> weightedGraph = {
+        {0, 1, 1},
+        {1, 0, 2},
+        {1, 2, 0}};
+    g2.loadGraph(weightedGraph);
+    ariel::Graph g4 = g1 * g2;
+    vector<vector<int>> expectedGraph = {
+        {0, 0, 2},
+        {1, 0, 1},
+        {1, 0, 0}};
+        std::ostringstream oss;
+    oss << g4;
+    std::string actual = oss.str();
+    CHECK(actual == "[1, 0, 2], [1, 3, 1], [1, 0, 2]\n");
+    
+}
+
+TEST_CASE("Invalid operations")
+{
+    ariel::Graph g1;
+    vector<vector<int>> graph = {
+        {0, 1, 0},
+        {1, 0, 1},
+        {0, 1, 0}};
+    g1.loadGraph(graph);
+    ariel::Graph g2;
+    vector<vector<int>> weightedGraph = {
+        {0, 1, 1, 1},
+        {1, 0, 2, 1},
+        {1, 2, 0, 1}};
+    //g2.loadGraph(weightedGraph);
+    ariel::Graph g5;
+    vector<vector<int>> graph2 = {
+        {0, 1, 0, 0, 1},
+        {1, 0, 1, 0, 0},
+        {0, 1, 0, 1, 0},
+        {0, 0, 1, 0, 1},
+        {1, 0, 0, 1, 0}};
+    g5.loadGraph(graph2);
+    CHECK_THROWS(g5 * g1);
+    //CHECK_THROWS(g1 * g2);
+
+    // Addition of two graphs with different dimensions
+    ariel::Graph g6;
+    vector<vector<int>> graph3 = {
+        {0, 1, 0, 0, 1},
+        {1, 0, 1, 0, 0},
+        {0, 1, 0, 1, 0},
+        {0, 0, 1, 0, 1},
+        {1, 0, 0, 1, 0}};
+    g6.loadGraph(graph3);
+    CHECK_THROWS(g1 + g6);
 }

@@ -77,7 +77,10 @@ namespace ariel {
 
         
     }
-
+/*
+Operator (+): Adds the adjacency matrices of two graphs, element-wise. 
+Throws an error if the graphs have different numbers of vertices.
+*/
 Graph Graph::operator+(const Graph& other) const {
         Graph result;
         if (this->v != other.getNumVertices()) {
@@ -96,6 +99,9 @@ Graph Graph::operator+(const Graph& other) const {
         std::cout << "Graph with " << v << " vertices and " << edges << " edges." << std::endl;
     }
 
+/*
+Operator (<<): Outputs the adjacency matrix of the graph in a readable format, row by row.
+*/
 std::ostream& operator<<(std::ostream& os, const Graph& graph) {
         // Output the adjacency matrix in the desired format
         
@@ -117,6 +123,9 @@ std::ostream& operator<<(std::ostream& os, const Graph& graph) {
         return os;
     }
 
+/*
+Operator (*=): Multiplies every element of the graph's adjacency matrix by a given scalar, excluding zero elements.
+*/
 void Graph::operator*=(int scalar) {
             for (size_t i = 0; i < v; ++i) {
                 for (size_t j = 0; j < v; ++j) {
@@ -127,6 +136,10 @@ void Graph::operator*=(int scalar) {
             }
         }
 
+/*
+Operator (/=): Divides every element of the graph's adjacency matrix by a given scalar, excluding zero elements. 
+Throws an error if the scalar is zero.
+*/
 void Graph::operator/=(int scalar) {
             if (scalar == 0) {
                 throw std::invalid_argument("Error: Division by zero!");
@@ -140,24 +153,30 @@ void Graph::operator/=(int scalar) {
             }
         }
 
- Graph operator*(const Graph& g1, const Graph& g2) {
-        if (g1.getNumVertices() != g2.getNumVertices()) {
-        throw std::invalid_argument("The number of columns in the first matrix must be equal to the number of rows in the second matrix.");
+/*
+Operator (*): Performs matrix multiplication on the adjacency matrices of two graphs. 
+Throws an error if the graphs have different numbers of vertices.
+*/
+Graph operator*(const Graph& g1, const Graph& g2) {
+    if (g1.getNumVertices() != g2.getNumVertices()) {
+        throw std::invalid_argument("The number of vertices in both graphs must be the same.");
     }
 
     // Create a new graph to store the result
     Graph result;
 
     // Get the number of vertices
-   size_t n = g1.getNumVertices();
+    size_t n = g1.getNumVertices();
 
     // Initialize the result matrix with zeros
     std::vector<std::vector<int>> resultMatrix(n, std::vector<int>(n, 0));
 
-    // Perform element-wise multiplication
+    // Perform matrix multiplication
     for (size_t i = 0; i < n; ++i) {
         for (size_t j = 0; j < n; ++j) {
-            resultMatrix[i][j] = g1.adjMat[i][j] * g2.adjMat[i][j];
+            for (size_t k = 0; k < n; ++k) {
+                resultMatrix[i][j] += g1.adjMat[i][k] * g2.adjMat[k][j];
+            }
         }
     }
 
@@ -165,8 +184,11 @@ void Graph::operator/=(int scalar) {
     result.loadGraph(resultMatrix);
 
     return result;
-    }
+}
 
+/*
+Operator (++): Increments each non-zero element of the adjacency matrix by one.
+*/
 Graph& operator++(Graph& graph) {
     
     for (size_t i = 0; i < graph.getNumVertices(); ++i) {
@@ -179,6 +201,9 @@ Graph& operator++(Graph& graph) {
     return graph;
 }
 
+/*
+Operator (--): Decrements each non-zero element of the adjacency matrix by one.
+*/
 Graph& operator--(Graph& graph) {
     
     for (size_t i = 0; i < graph.getNumVertices(); ++i) {
@@ -191,6 +216,9 @@ Graph& operator--(Graph& graph) {
     return graph;
 }
 
+/*
+Operator (==): Checks if the adjacency matrices of two graphs are identical, first by size and then element-wise.
+*/
 bool operator==(const Graph& g1, const Graph& g2) {
     
     if (g1.getNumVertices() != g2.getNumVertices()) {
@@ -210,6 +238,9 @@ bool operator==(const Graph& g1, const Graph& g2) {
     return true;
 }
 
+/*
+Operator (<=): Checks if one graph has fewer or equal edges compared to another and if every edge in the first graph exists in the second graph.
+*/
 bool operator<=(const Graph& g1, const Graph& g2){
     if(g1.edges > g2.edges){
         return false;
@@ -226,6 +257,9 @@ bool operator<=(const Graph& g1, const Graph& g2){
     return true;
 }
 
+/*
+Operator (>=): Checks if one graph has more or equal edges compared to another and if every edge in the second graph exists in the first graph.
+*/
 bool operator>=(const Graph& g1, const Graph& g2){
     if(g1.edges < g2.edges){
         return false;
