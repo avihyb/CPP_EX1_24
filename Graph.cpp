@@ -18,6 +18,9 @@ namespace ariel {
         int n = matrix.size();
         this->edges = 0;
         
+        if(n == 0){
+            throw std::invalid_argument("Error: Empty matrix!");
+        }
         
         // Check if the matrix is square
         for (size_t i = 0; i < n; ++i) {
@@ -176,6 +179,15 @@ Graph operator*(const Graph& g1, const Graph& g2) {
         for (size_t j = 0; j < n; ++j) {
             for (size_t k = 0; k < n; ++k) {
                 resultMatrix[i][j] += g1.adjMat[i][k] * g2.adjMat[k][j];
+            }
+        }
+    }
+    
+    // Zero the diagonal
+    for(size_t i = 0; i < n; ++i){
+        for(size_t j = 0; j < n; ++j){
+            if(i == j){
+                resultMatrix[i][j] = 0;
             }
         }
     }
@@ -343,6 +355,11 @@ Graph& Graph::operator-()
 }
 
 bool Graph::operator<(const Graph &other)
+{
+    return !(this >= &other);
+}
+
+bool Graph::operator>(const Graph &other)
 {
     return !(this <= &other);
 }

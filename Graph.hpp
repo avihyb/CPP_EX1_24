@@ -45,6 +45,7 @@ namespace ariel {
         friend bool operator<=(const Graph& g1, const Graph& g2);
         friend bool operator>=(const Graph& g1, const Graph& g2);
         bool operator<(const Graph& other);
+        bool operator>(const Graph& other);
         Graph& operator+();
         Graph& operator-();
         bool operator!=(const Graph& other);
