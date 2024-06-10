@@ -56,7 +56,7 @@ TEST_CASE("Test isConnected")
         {1, 1, 1},
         {1, 1, 1}};
     g.loadGraph(graph6);
-    CHECK(ariel::Algorithms::isConnected(g) == 1); // Should be "0".
+    CHECK(ariel::Algorithms::isConnected(g) == 1); // Should be "1".
 }
 
 TEST_CASE("Test shortestPath")
@@ -251,6 +251,7 @@ TEST_CASE("Operators testing"){
         {0, 1, 0}};
     g.loadGraph(graph);
     CHECK(g == g);
+    
     ariel::Graph g2;
     vector<vector<int>> graph2 = {
         {0, 2, 0},
